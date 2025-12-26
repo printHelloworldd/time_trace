@@ -104,7 +104,7 @@ class CsvService {
   /// Imports activities from CSV
   Future<ImportResult> importActivitiesFromCsv() async {
     try {
-      // Выбираем файл
+      // Picks a file
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['csv'],
@@ -213,6 +213,7 @@ class CsvService {
         }
 
         // Parses data
+        final id = int.parse(row[0].toString());
         final title = row[1].toString();
         final categoryTitle = row[2].toString();
         final colorHex = row[3].toString();
@@ -230,17 +231,24 @@ class CsvService {
           int.parse(dateParts[2]),
         );
 
-        // Creates activity
-        final activity = ActivityModel(
-          title: title,
-          category: category,
-          hour: hour,
-          date: date,
-        );
+        final ActivityModel? savedActivity = await activityService
+            .getActivityById(id);
 
-        // Saves
-        await activityService.addActivity(activity);
-        successCount++;
+        if (savedActivity == null) {
+          // Creates activity
+          final activity = ActivityModel(
+            title: title,
+            category: category,
+            hour: hour,
+            date: date,
+          );
+
+          // Saves
+          await activityService.addActivity(activity);
+          successCount++;
+        } else {
+          continue;
+        }
       } catch (e) {
         errors.add('Row $i: $e');
         errorCount++;

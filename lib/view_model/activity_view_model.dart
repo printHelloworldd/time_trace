@@ -59,7 +59,7 @@ class ActivityViewModel extends ChangeNotifier {
       );
 
       await activityService.addActivity(activity);
-      await loadTodayActivities();
+      await init();
     } catch (e) {
       _error = 'Failed to add activity: $e';
       notifyListeners();
@@ -69,7 +69,7 @@ class ActivityViewModel extends ChangeNotifier {
   Future<void> updateActivity(ActivityModel activity) async {
     try {
       await activityService.updateActivity(activity);
-      await loadTodayActivities();
+      await init();
     } catch (e) {
       _error = 'Failed to update activity: $e';
       notifyListeners();
@@ -79,7 +79,7 @@ class ActivityViewModel extends ChangeNotifier {
   Future<void> deleteActivity(int id) async {
     try {
       await activityService.deleteActivity(id);
-      await loadTodayActivities();
+      await init();
     } catch (e) {
       _error = 'Failed to delete activity: $e';
       notifyListeners();

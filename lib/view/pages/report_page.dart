@@ -111,67 +111,9 @@ class _ReportPageState extends State<ReportPage> {
         builder: (context, activityVM, categoryVM, child) {
           return Column(
             children: <Widget>[
-              SizedBox(
-                height: MediaQuery.sizeOf(context).height / 4,
-                child: PieChart(
-                  PieChartData(
-                    pieTouchData: PieTouchData(
-                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                        setState(() {
-                          if (!event.isInterestedForInteractions ||
-                              pieTouchResponse == null ||
-                              pieTouchResponse.touchedSection == null) {
-                            touchedIndex = -1;
-                            return;
-                          }
-                          touchedIndex =
-                              pieTouchResponse
-                                  .touchedSection!
-                                  .touchedSectionIndex;
-                        });
-                      },
-                    ),
-                    borderData: FlBorderData(show: false),
-                    sectionsSpace: 0,
-                    centerSpaceRadius: 40,
-                    sections:
-                        activityVM.categoryStatsForToday.entries.indexed.map((
-                          indexedEntry,
-                        ) {
-                          final CategoryModel category = indexedEntry.$2.key;
-                          final double value =
-                              indexedEntry.$2.value /
-                              activityVM.todayActivities.length *
-                              100;
-
-                          String valueString = value.toStringAsFixed(2);
-                          if (valueString.endsWith(".00")) {
-                            valueString = valueString.split(".").removeAt(0);
-                          }
-
-                          int index = indexedEntry.$1;
-                          final isTouched = index == touchedIndex;
-                          final fontSize = isTouched ? 25.0 : 16.0;
-                          final radius = isTouched ? 60.0 : 50.0;
-                          const shadows = [
-                            Shadow(color: Colors.black, blurRadius: 2),
-                          ];
-
-                          return PieChartSectionData(
-                            color: category.color,
-                            value: value,
-                            title: "$valueString%",
-                            radius: radius,
-                            titleStyle: TextStyle(
-                              fontSize: fontSize,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              shadows: shadows,
-                            ),
-                          );
-                        }).toList(),
-                  ),
-                ),
+              _buildDailyChart(
+                activityVM.categoryStatsForToday,
+                activityVM.todayActivities.length,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -208,22 +150,93 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
+  Widget _buildDailyChart(
+    Map<CategoryModel, int> categoryStats,
+    int activitiesCount,
+  ) {
+    if (categoryStats.isEmpty) {
+      return SizedBox(
+        height: MediaQuery.sizeOf(context).height / 4,
+        child: Center(child: Text("No data. Add some activity for today")),
+      );
+    } else {
+      return SizedBox(
+        height: MediaQuery.sizeOf(context).height / 4,
+        child: PieChart(
+          PieChartData(
+            pieTouchData: PieTouchData(
+              touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                setState(() {
+                  if (!event.isInterestedForInteractions ||
+                      pieTouchResponse == null ||
+                      pieTouchResponse.touchedSection == null) {
+                    touchedIndex = -1;
+                    return;
+                  }
+                  touchedIndex =
+                      pieTouchResponse.touchedSection!.touchedSectionIndex;
+                });
+              },
+            ),
+            borderData: FlBorderData(show: false),
+            sectionsSpace: 0,
+            centerSpaceRadius: 40,
+            sections:
+                categoryStats.entries.indexed.map((indexedEntry) {
+                  final CategoryModel category = indexedEntry.$2.key;
+                  final double value =
+                      indexedEntry.$2.value / activitiesCount * 100;
+
+                  String valueString = value.toStringAsFixed(2);
+                  if (valueString.endsWith(".00")) {
+                    valueString = valueString.split(".").removeAt(0);
+                  }
+
+                  int index = indexedEntry.$1;
+                  final isTouched = index == touchedIndex;
+                  final fontSize = isTouched ? 25.0 : 16.0;
+                  final radius = isTouched ? 60.0 : 50.0;
+                  const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+
+                  return PieChartSectionData(
+                    color: category.color,
+                    value: value,
+                    title: "$valueString%",
+                    radius: radius,
+                    titleStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      shadows: shadows,
+                    ),
+                  );
+                }).toList(),
+          ),
+        ),
+      );
+    }
+  }
+
   Widget _buildTopDailyActivities(
     LinkedHashMap<ActivityModel, int> activities,
   ) {
-    return Expanded(
-      child: ListView(
-        children:
-            activities.entries.map((entry) {
-              return ActivityCard(
-                activity: entry.key,
-                overallHours: entry.value,
-                full: false,
-                onPressed: () {},
-                onDelete: () {},
-              );
-            }).toList(),
-      ),
-    );
+    if (activities.isEmpty) {
+      return SizedBox(child: Row(children: [Text("No activities for today")]));
+    } else {
+      return Expanded(
+        child: ListView(
+          children:
+              activities.entries.map((entry) {
+                return ActivityCard(
+                  activity: entry.key,
+                  overallHours: entry.value,
+                  full: false,
+                  onPressed: () {},
+                  onDelete: () {},
+                );
+              }).toList(),
+        ),
+      );
+    }
   }
 }

@@ -125,7 +125,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(result.message),
+                  if (result.success && result.successCount == 0) ...[
+                    Text("No data has been imported. It already exists"),
+                  ] else
+                    Text(result.message),
                   if (result.errors.isNotEmpty) ...[
                     const SizedBox(height: 16),
                     const Text('Errors:'),
