@@ -90,7 +90,7 @@ class _SettingsPageState extends State<SettingsPage> {
           (context) => AlertDialog(
             title: const Text('Import sata'),
             content: const Text(
-              'The data from the file will be appended to the existing ones.\n\n'
+              'The data from the file will be added to the existing ones.\n\n'
               'Continue?',
             ),
             actions: [
@@ -148,7 +148,7 @@ class _SettingsPageState extends State<SettingsPage> {
       );
     } finally {
       if (mounted) {
-        context.read<ActivityViewModel>().loadTodayActivities();
+        context.read<ActivityViewModel>().init();
         setState(() => _isLoading = false);
       }
     }

@@ -237,6 +237,7 @@ class CsvService {
         if (savedActivity == null) {
           // Creates activity
           final activity = ActivityModel(
+            id: id,
             title: title,
             category: category,
             hour: hour,
