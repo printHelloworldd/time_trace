@@ -17,9 +17,9 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _isLoading = false;
 
   static const privacyPolicyUrl =
-      "https://www.termsfeed.com/live/5087524d-37bd-4cfb-853d-0b53dfc417c3";
+      "https://www.freeprivacypolicy.com/live/755f6a2b-6302-4b84-a68c-60f1c88fc4a0";
   static const termsConditionsUrl =
-      "https://www.termsfeed.com/live/9c216b28-0070-483f-aa08-3dfb9f37f283";
+      "https://www.freeprivacypolicy.com/live/283b59bf-0981-48dc-a9a2-3e4518bcdeca";
 
   Future<void> _exportAndShare() async {
     setState(() => _isLoading = true);

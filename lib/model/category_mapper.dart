@@ -12,7 +12,7 @@ class CategoryMapper {
       color: Color(entity.colorValue),
       icon:
           entity.iconCodePoint != null
-              ? IconData(entity.iconCodePoint!, fontFamily: 'MaterialIcons')
+              ? const IconData(0xe87c, fontFamily: 'MaterialIcons')
               : null,
     );
   }

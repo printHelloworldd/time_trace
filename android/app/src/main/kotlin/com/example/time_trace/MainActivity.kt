@@ -1,4 +1,4 @@
-package com.example.time_trace
+package com.teksoul.time_trace
 
 import io.flutter.embedding.android.FlutterActivity
 
